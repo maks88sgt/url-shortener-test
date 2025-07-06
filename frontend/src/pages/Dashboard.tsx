@@ -1,161 +1,72 @@
-import { useState } from "react"
-import { LinkIcon, Scissors, Trash2, Copy, CheckCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
-import { useCreateShortUrlMutation, useDeleteShortUrlMutation } from "../api/shortUrlApi"
+import { useCreateShortUrlMutation, useDeleteShortUrlMutation } from '../api/shortUrlApi'
+import { useState } from 'react'
 
 export default function Dashboard() {
-  const [originalUrl, setOriginalUrl] = useState("")
-  const [alias, setAlias] = useState("")
-  const [shortUrl, setShortUrl] = useState("")
-  const [createShortUrl, { isLoading: isCreating }] = useCreateShortUrlMutation()
-  const [deleteShortUrl, { isLoading: isDeleting }] = useDeleteShortUrlMutation()
-  const { toast } = useToast()
+  const [originalUrl, setOriginalUrl] = useState('')
+  const [alias, setAlias] = useState('')
+  const [createShortUrl] = useCreateShortUrlMutation()
+  const [deleteShortUrl] = useDeleteShortUrlMutation()
 
   const handleCreate = async () => {
+    if (!originalUrl.trim()) {
+      alert('Пожалуйста, введите ссылку')
+      return
+    }
     try {
       const response = await createShortUrl({ originalUrl, alias }).unwrap()
-      setShortUrl(response.shortUrl)
-      toast({
-        title: "Успешно!",
-        description: "Ссылка успешно сокращена",
-      })
+      alert(`Сокращенная ссылка: ${response.shortUrl}`)
+      setOriginalUrl('')
+      setAlias('')
     } catch (error) {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось создать ссылку",
-        variant: "destructive",
-      })
+      alert('Ошибка при создании ссылки')
     }
   }
 
   const handleDelete = async () => {
+    if (!alias.trim()) {
+      alert('Пожалуйста, введите alias для удаления')
+      return
+    }
     try {
       await deleteShortUrl(alias)
-      setShortUrl("")
-      toast({
-        title: "Удалено",
-        description: "Ссылка успешно удалена",
-      })
+      alert('Ссылка удалена')
+      setAlias('')
     } catch (error) {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось удалить ссылку",
-        variant: "destructive",
-      })
+      alert('Ошибка при удалении ссылки')
     }
   }
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shortUrl)
-    toast({
-      title: "Скопировано!",
-      description: "Ссылка скопирована в буфер обмена",
-    })
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mx-auto max-w-2xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-            Сократить ссылку
-          </h1>
-          <p className="text-gray-600">Превратите длинные ссылки в короткие и красивые</p>
-        </div>
-
-        <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
-          <CardHeader className="text-center pb-4">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500">
-              <Scissors className="h-6 w-6 text-white" />
-            </div>
-            <CardTitle className="text-xl">Создать короткую ссылку</CardTitle>
-            <CardDescription>Введите ссылку и получите её сокращённую версию</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="original-url" className="text-sm font-medium">
-                Оригинальная ссылка
-              </Label>
-              <div className="relative">
-                <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="original-url"
-                  placeholder="https://example.com/very-long-url"
-                  value={originalUrl}
-                  onChange={(e) => setOriginalUrl(e.target.value)}
-                  className="pl-10 h-12 border-gray-200 focus:border-purple-300 focus:ring-purple-200"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="alias" className="text-sm font-medium">
-                Псевдоним (необязательно)
-              </Label>
-              <Input
-                id="alias"
-                placeholder="my-custom-alias"
-                value={alias}
-                onChange={(e) => setAlias(e.target.value)}
-                className="h-12 border-gray-200 focus:border-purple-300 focus:ring-purple-200"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleCreate}
-                disabled={!originalUrl || isCreating}
-                className="flex-1 h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium"
-              >
-                {isCreating ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    <span>Создание...</span>
-                  </div>
-                ) : (
-                  <>
-                    <Scissors className="mr-2 h-4 w-4" />
-                    Сократить
-                  </>
-                )}
-              </Button>
-
-              <Button
-                onClick={handleDelete}
-                disabled={!alias || isDeleting}
-                variant="outline"
-                className="h-12 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 bg-transparent"
-              >
-                {isDeleting ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
-                ) : (
-                  <Trash2 className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-
-            {shortUrl && (
-              <Card className="border-green-200 bg-green-50">
-                <CardContent className="pt-6">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <span className="font-medium text-green-800">Готово!</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Input value={shortUrl} readOnly className="flex-1 bg-white border-green-200" />
-                    <Button onClick={copyToClipboard} size="sm" className="bg-green-600 hover:bg-green-700">
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </CardContent>
-        </Card>
+    <div className="p-6 max-w-lg mx-auto bg-zinc-900 rounded-lg shadow-lg mt-8 px-4 sm:px-6">
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-6 text-white text-center">
+        Сократить ссылку
+      </h1>
+      <input
+        type="url"
+        className="block w-full p-3 mb-4 rounded-md bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Введите ссылку"
+        value={originalUrl}
+        onChange={(e) => setOriginalUrl(e.target.value)}
+      />
+      <input
+        className="block w-full p-3 mb-6 rounded-md bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Alias (необязательно)"
+        value={alias}
+        onChange={(e) => setAlias(e.target.value)}
+      />
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <button
+          onClick={handleCreate}
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 transition-colors text-white px-6 py-3 rounded-md font-semibold shadow-md"
+        >
+          Сократить
+        </button>
+        <button
+          onClick={handleDelete}
+          className="w-full sm:w-auto bg-red-600 hover:bg-red-700 transition-colors text-white px-6 py-3 rounded-md font-semibold shadow-md"
+        >
+          Удалить
+        </button>
       </div>
     </div>
   )
