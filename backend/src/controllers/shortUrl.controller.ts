@@ -126,19 +126,24 @@ export const deleteShortUrl = async (
 ) => {
   const { alias } = req.params;
 
-  const url = await shortUrlRepo.findOneBy({ alias });
+  try {
+    const url = await shortUrlRepo.findOneBy({ alias });
 
-  if (!url) {
-    res
-      .status(404)
-      .json({ message: 'Short URL not found' });
+    if (!url) {
+      res
+        .status(404)
+        .json({ message: 'Short URL not found' });
+      return;
+    }
+
+    await shortUrlRepo.remove(url);
+
+    res.json({ message: 'Short URL deleted' });
     return;
+  } catch (e) {
+    console.log(e);
+    res.json({ message: 'Failed to delete alias' });
   }
-
-  await shortUrlRepo.remove(url);
-
-  res.json({ message: 'Short URL deleted' });
-  return;
 };
 
 // GET /analytics/:alias
@@ -174,7 +179,9 @@ export const getAnalytics = async (
 
   const dailyClicksMap: Record<string, number> = {};
   url.clicks.forEach((click) => {
-    const date = click.clickedAt.toISOString().split('T')[0]; // формат: YYYY-MM-DD
+    const date = click.clickedAt
+      .toISOString()
+      .split('T')[0]; // формат: YYYY-MM-DD
     dailyClicksMap[date] = (dailyClicksMap[date] || 0) + 1;
   });
 
@@ -189,6 +196,7 @@ export const getAnalytics = async (
     totalClicks: url.clickCount,
     last5Clicks,
     dailyClicks,
+    originalUrl: url.originalUrl
   });
   return;
 };
