@@ -1,73 +1,67 @@
-import { useCreateShortUrlMutation, useDeleteShortUrlMutation } from '../api/shortUrlApi'
-import { useState } from 'react'
+import { useState } from 'react';
+import { useCreateShortUrlMutation, useDeleteShortUrlMutation } from '../api/shortUrlApi';
+import { ShortUrlResult } from '../components/ShortUrlResult';
 
 export default function Dashboard() {
-  const [originalUrl, setOriginalUrl] = useState('')
-  const [alias, setAlias] = useState('')
-  const [createShortUrl] = useCreateShortUrlMutation()
-  const [deleteShortUrl] = useDeleteShortUrlMutation()
+  const [originalUrl, setOriginalUrl] = useState<string>('');
+  const [alias, setAlias] = useState<string>('');
+  const [shortUrl, setShortUrl] = useState<string | null>(null);
+
+  const [createShortUrl] = useCreateShortUrlMutation();
+  const [deleteShortUrl] = useDeleteShortUrlMutation();
 
   const handleCreate = async () => {
-    if (!originalUrl.trim()) {
-      alert('Пожалуйста, введите ссылку')
-      return
-    }
     try {
-      const response = await createShortUrl({ originalUrl, alias }).unwrap()
-      alert(`Сокращенная ссылка: ${response.shortUrl}`)
-      setOriginalUrl('')
-      setAlias('')
-    } catch (error) {
-      alert('Ошибка при создании ссылки')
+      const response = await createShortUrl({ originalUrl, alias }).unwrap();
+      setShortUrl(response.shortUrl);
+    } catch (err) {
+      alert('Ошибка при создании ссылки');
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!alias.trim()) {
-      alert('Пожалуйста, введите alias для удаления')
-      return
-    }
     try {
-      await deleteShortUrl(alias)
-      alert('Ссылка удалена')
-      setAlias('')
-    } catch (error) {
-      alert('Ошибка при удалении ссылки')
+      await deleteShortUrl(alias).unwrap();
+      alert('Ссылка удалена');
+      setShortUrl(null);
+      setAlias('');
+      setOriginalUrl('');
+    } catch (err) {
+      alert('Ошибка при удалении ссылки');
     }
-  }
+  };
 
   return (
-    <div className="p-6 max-w-lg mx-auto bg-zinc-900 rounded-lg shadow-lg mt-8 px-4 sm:px-6">
-      <h1 className="text-2xl sm:text-3xl font-extrabold mb-6 text-white text-center">
-        Сократить ссылку
-      </h1>
+    <div className="p-6 max-w-md mx-auto space-y-4 bg-zinc-900 rounded-lg shadow-lg mt-8 px-4">
+      <h1 className="text-2xl font-bold text-white text-center">Сократить ссылку</h1>
       <input
         type="url"
-        className="block w-full p-3 mb-4 rounded-md bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border p-3 w-full rounded bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Введите ссылку"
         value={originalUrl}
         onChange={(e) => setOriginalUrl(e.target.value)}
       />
       <input
-        className="block w-full p-3 mb-6 rounded-md bg-zinc-800 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="border p-3 w-full rounded bg-zinc-800 border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Alias (необязательно)"
         value={alias}
         onChange={(e) => setAlias(e.target.value)}
       />
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="flex gap-4 justify-center">
         <button
+          className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition font-semibold"
           onClick={handleCreate}
-          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 transition-colors text-white px-6 py-3 rounded-md font-semibold shadow-md"
         >
           Сократить
         </button>
         <button
+          className="bg-red-600 text-white px-6 py-3 rounded hover:bg-red-700 transition font-semibold"
           onClick={handleDelete}
-          className="w-full sm:w-auto bg-red-600 hover:bg-red-700 transition-colors text-white px-6 py-3 rounded-md font-semibold shadow-md"
         >
           Удалить
         </button>
       </div>
+      <ShortUrlResult shortUrl={shortUrl} />
     </div>
-  )
+  );
 }
