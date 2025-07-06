@@ -3,7 +3,7 @@ import type { AnalyticsData } from '../interfaces'
 
 export const shortUrlApi = createApi({
   reducerPath: 'shortUrlApi',
-  baseQuery: fetchBaseQuery({ baseUrl:`${import.meta.env.VITE_BASE_URL}/api/ `}),
+  baseQuery: fetchBaseQuery({ baseUrl:`${import.meta.env.VITE_BASE_URL}/api`}),
   endpoints: (builder) => ({
     createShortUrl: builder.mutation({
       query: (body) => ({

@@ -31,7 +31,7 @@ services:
       DB_USER: shortener
       DB_PASS: 12345
       DB_NAME: shortener
-      BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com
+      BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com/
 
   frontend:
     build: ./frontend
@@ -40,4 +40,4 @@ services:
     depends_on:
       - backend
     environment:
-      VITE_BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com
+      VITE_BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com/

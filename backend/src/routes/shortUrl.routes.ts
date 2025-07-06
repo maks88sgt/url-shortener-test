@@ -152,6 +152,6 @@ router.get('/api/analytics/:alias', getAnalytics);
  *       404:
  *         description: Ссылка не найдена
  */
-router.get('/:alias', redirectToOriginalUrl);
+router.get('/api/:alias', redirectToOriginalUrl);
 
 export default router;

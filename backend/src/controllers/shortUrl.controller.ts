@@ -44,7 +44,7 @@ export const createShortUrl = async (
     await shortUrlRepo.save(shortUrl);
 
     res.status(201).json({
-      shortUrl: `${process.env.BASE_URL || 'http://localhost:3000'}/${finalAlias}`,
+      shortUrl: `${process.env.BASE_URL + "api" || 'http://localhost:3000/api/'}/${finalAlias}`,
     });
     return;
   } catch (err) {
