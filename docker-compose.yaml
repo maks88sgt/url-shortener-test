@@ -5,15 +5,15 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_DB: shortener
-      POSTGRES_USER: shortener
-      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U shortener"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -26,12 +26,12 @@ services:
       db:
         condition: service_healthy
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: shortener
-      DB_PASS: 12345
-      DB_NAME: shortener
-      BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com/
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      BASE_URL: ${BASE_URL}
 
   frontend:
     build: ./frontend
@@ -40,4 +40,4 @@ services:
     depends_on:
       - backend
     environment:
-      VITE_BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com/
+      VITE_BASE_URL: ${VITE_BASE_URL}
