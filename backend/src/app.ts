@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import shortUrlRoutes from './routes/shortUrl.routes';
-import { setupSwagger } from './swagger';
+import shortUrlRoutes from './routes/shortUrl.routes.js';
+import { setupSwagger } from './swagger.js';
 
 dotenv.config();
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { AppDataSource } from '../ormconfig';
-import { ShortUrl } from '../entities/ShortUrl';
-import { Click } from '../entities/Click';
+import { AppDataSource } from '../ormconfig.js';
+import { ShortUrl } from '../entities/ShortUrl.js';
+import { Click } from '../entities/Click.js';
 import { nanoid } from 'nanoid';
 
 const shortUrlRepo = AppDataSource.getRepository(ShortUrl);

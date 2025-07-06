@@ -1,11 +1,11 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
   ManyToOne,
+  CreateDateColumn,
+  Column
 } from 'typeorm';
-import { ShortUrl } from './ShortUrl';
+import type { ShortUrl } from './ShortUrl.js';
 
 @Entity()
 export class Click {
@@ -18,6 +18,6 @@ export class Click {
   @CreateDateColumn()
   clickedAt!: Date;
 
-  @ManyToOne(() => ShortUrl, (shortUrl) => shortUrl.clicks, { onDelete: 'CASCADE' })
+  @ManyToOne('ShortUrl', (shortUrl: ShortUrl) => shortUrl.clicks)
   shortUrl!: ShortUrl;
 }

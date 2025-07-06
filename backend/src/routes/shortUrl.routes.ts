@@ -5,7 +5,7 @@ import {
   getUrlInfo,
   deleteShortUrl,
   getAnalytics,
-} from '../controllers/shortUrl.controller';
+} from '../controllers/shortUrl.controller.js';
 
 const router = Router();
 

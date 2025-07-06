@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Click } from './Click';
+import type { Click } from './Click.js';
 
 @Entity()
 export class ShortUrl {
@@ -27,6 +27,6 @@ export class ShortUrl {
   @Column({ default: 0 })
   clickCount!: number;
 
-  @OneToMany(() => Click, (click) => click.shortUrl)
+  @OneToMany('Click', (click: Click) => click.shortUrl)
   clicks!: Click[];
 }

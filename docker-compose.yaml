@@ -12,19 +12,26 @@ services:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shortener"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   backend:
     build: ./backend
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: shortener
       DB_PASS: 12345
       DB_NAME: shortener
+      BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com
 
   frontend:
     build: ./frontend
@@ -32,3 +39,5 @@ services:
       - "8080:80"
     depends_on:
       - backend
+    environment:
+      VITE_BASE_URL: https://user88689131-4qtadoo7.tunnel.vk-apps.com

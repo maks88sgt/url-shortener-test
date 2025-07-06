@@ -1,5 +1,5 @@
-import app from './app';
-import { AppDataSource } from './ormconfig';
+import app from './app.js';
+import { AppDataSource } from './ormconfig.js';
 
 const PORT = process.env.PORT || 3000;
 

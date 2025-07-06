@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
-import { ShortUrl } from './entities/ShortUrl';
-import { Click } from './entities/Click';
+import { ShortUrl } from './entities/ShortUrl.js';
+import { Click } from './entities/Click.js';
 import dotenv from 'dotenv';
 dotenv.config();
 

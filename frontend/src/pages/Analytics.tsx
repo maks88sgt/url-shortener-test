@@ -15,7 +15,7 @@ export default function Analytics() {
   const [inputValue, setInputValue] = useState('');
   const alias = extractAlias(inputValue) ?? '';
 
-  const { data, isLoading, error, refetch } = useGetAnalyticsQuery(alias, {
+  const { data, isLoading, error } = useGetAnalyticsQuery(alias, {
     skip: !alias,
   });
 
